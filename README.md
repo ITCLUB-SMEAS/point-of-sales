@@ -1,58 +1,187 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Kasir Fotocopy Sekolah
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![CI](https://github.com/ITCLUB-SMEAS/point-of-sales/actions/workflows/ci.yml/badge.svg)](https://github.com/ITCLUB-SMEAS/point-of-sales/actions/workflows/ci.yml)
 
-## About Laravel
+Kasir Fotocopy Sekolah adalah aplikasi kasir sederhana untuk toko fotocopy di lingkungan sekolah. Aplikasi ini dibuat agar transaksi harian bisa dicatat dengan rapi, kasir murid tetap mudah menggunakan sistem, dan admin/guru tetap punya kontrol terhadap laporan, stok, dan aktivitas kasir.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Kegunaan Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Aplikasi ini membantu toko fotocopy sekolah untuk:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Mencatat transaksi fotocopy, print, scan, jilid, laminating, dan penjualan ATK.
+- Membuka dan menutup shift kasir.
+- Menerima pembayaran cash dan QRIS.
+- Menyimpan draft keranjang ketika transaksi belum jadi dibayar.
+- Mencetak atau melihat struk transaksi.
+- Mengelola stok barang dan bahan habis pakai.
+- Menampilkan peringatan stok menipis.
+- Mencatat retur/refund transaksi.
+- Membuat laporan harian dalam format PDF dan CSV.
+- Melihat audit aktivitas kasir, terutama jika ada selisih kas.
+- Meminta approval admin untuk aksi sensitif seperti void, refund, dan koreksi tertentu.
 
-## Learning Laravel
+## Hak Akses
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Ada beberapa peran pengguna di aplikasi:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Admin/Guru**: mengelola produk, stok, laporan, user, approval, audit, dan aktivitas backoffice.
+- **Kasir Murid**: fokus memakai halaman kasir di `/pos`.
+- **Supervisor**: bisa membantu approval dan pengecekan operasional jika dibutuhkan.
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Kasir murid dibuat sesederhana mungkin agar tidak perlu masuk ke banyak menu admin.
 
-## Agentic Development
+## Halaman Penting
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- `/pos` - halaman utama kasir untuk transaksi cepat.
+- `/admin` - halaman admin/backoffice berbasis Filament.
+- `/admin/daily-report` - laporan harian.
+- `/admin/cashier-audit` - audit detail per kasir.
+- `/admin/reorder-list` - daftar stok yang perlu dibeli ulang.
+
+## Teknologi
+
+Aplikasi ini menggunakan:
+
+- Laravel 13
+- PHP 8.4
+- Filament 5
+- Livewire 4
+- Tailwind CSS 4
+- MySQL
+- Redis untuk cache saat menggunakan Docker
+- FrankenPHP untuk menjalankan aplikasi di Docker
+- Bun dan Vite untuk build frontend
+
+## Menjalankan Secara Lokal
+
+Pastikan komputer sudah memiliki PHP, Composer, Bun, dan MySQL.
+
+1. Salin file environment:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cp .env.example .env
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+2. Install dependency backend:
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Install dependency frontend:
 
-## Code of Conduct
+```bash
+bun install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. Buat application key:
 
-## Security Vulnerabilities
+```bash
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. Atur database di file `.env`, lalu jalankan migrasi dan data contoh:
 
-## License
+```bash
+php artisan migrate --seed
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+6. Build asset frontend:
+
+```bash
+bun run build
+```
+
+7. Jalankan aplikasi:
+
+```bash
+php artisan serve
+```
+
+Setelah itu aplikasi bisa dibuka di `http://localhost:8000`.
+
+## Akun Contoh
+
+Jika menjalankan `php artisan migrate --seed`, aplikasi akan membuat akun contoh:
+
+| Peran | Email | Password |
+| --- | --- | --- |
+| Admin/Guru | `admin@sekolah.test` | `password` |
+| Kasir Murid | `kasir@sekolah.test` | `password` |
+
+Ganti password akun tersebut sebelum dipakai untuk operasional sungguhan.
+
+## Menjalankan Dengan Docker dan FrankenPHP
+
+Project ini sudah dilengkapi Docker Compose untuk menjalankan aplikasi bersama MySQL dan Redis.
+
+1. Salin file environment:
+
+```bash
+cp .env.example .env
+```
+
+2. Isi `APP_KEY` di `.env`. Cara termudah:
+
+```bash
+php artisan key:generate --show
+```
+
+Salin hasilnya ke bagian `APP_KEY=` di file `.env`.
+
+3. Jalankan Docker:
+
+```bash
+docker compose up --build
+```
+
+4. Jika ingin mengisi data contoh, jalankan:
+
+```bash
+docker compose exec frankenphp php artisan db:seed
+```
+
+Aplikasi akan tersedia di `http://localhost:8000`.
+
+Catatan: saat container dijalankan, migration akan berjalan otomatis. Jika tidak ingin migration otomatis, isi `RUN_MIGRATIONS=false` di file `.env`.
+
+## Perintah Pengembangan
+
+Beberapa perintah yang sering dipakai:
+
+```bash
+php artisan test --compact
+vendor/bin/pint --dirty --format agent
+bun run build
+```
+
+Untuk mode pengembangan dengan Vite:
+
+```bash
+bun run dev
+```
+
+## CI
+
+Project ini memiliki GitHub Actions di `.github/workflows/ci.yml`. Setiap push atau pull request ke branch utama akan menjalankan:
+
+- Install dependency PHP.
+- Install dependency frontend.
+- Cek format kode dengan Laravel Pint.
+- Jalankan PHPUnit.
+- Build asset frontend.
+
+## Catatan Operasional
+
+Sebelum dipakai di toko sungguhan, pastikan:
+
+- Data produk, layanan, dan harga sudah sesuai.
+- Stok awal sudah diisi dengan benar.
+- Akun admin dan kasir sudah dibuat sesuai petugas.
+- Password akun contoh sudah diganti.
+- Laporan harian dicek rutin oleh admin/guru.
+- Backup database disiapkan jika aplikasi dipakai untuk operasional harian.
+
+## Lisensi
+
+Project ini dibuat untuk kebutuhan aplikasi kasir toko fotocopy sekolah. Penggunaan dan pengembangan lebih lanjut dapat disesuaikan dengan kebutuhan sekolah atau organisasi.
